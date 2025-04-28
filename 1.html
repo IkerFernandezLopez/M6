@@ -1,38 +1,71 @@
-<html>
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Buscador de Ciudades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #resultados {
+            margin-top: 20px;
+        }
+
+        input,
+        button {
+            padding: 10px;
+            font-size: 16px;
+        }
+    </style>
 </head>
 
 <body>
-    <div id="mostrar"></div>
-    <button id="btn1">CARGAR</button>
+
+    <h1>Busca tu ciudad</h1>
+
+    <input type="text" id="ciudad" placeholder="Escribe una ciudad...">
+    <button onclick="buscarDirecto()">Buscar directo</button>
+    <button onclick="buscarConPHP()">Buscar con PHP</button>
+
+    <div id="resultados"></div>
+
     <script>
-        const mostrar = document.getElementById('mostrar'); // Element to display the data
-        const btn1 = document.getElementById('btn1'); // Button to trigger the fetch
+        function buscarDirecto() {
+            let ciudad = document.getElementById('ciudad').value.trim();
+            if (ciudad === "") {
+                alert("Ey, escribe algo");
+                return;
+            }
+            let iframe = `<iframe src="https://es.wikipedia.org/wiki/${encodeURIComponent(ciudad)}" height="500px" width="100%"></iframe>`;
+            document.getElementById('resultados').innerHTML = iframe;
+        }
 
-        btn1.addEventListener('click', (e) => {
-            fetch('https://jsonplaceholder.typicode.com/comments') // Fetch data from the API
-                .then(response => response.json())
-                .then(datos => {
-                    datos.forEach(element => {
-                        mostrar.innerHTML += `<li>${element.email}</li>`; // Display each name in the div
-                    });
+        function buscarConPHP() {
+            let ciudad = document.getElementById('ciudad').value.trim();
+            if (ciudad === "") {
+                alert("Ey, escribe algo");
+                return;
+            }
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('POST', 'procesar_ciudad.php', true); // AQUÍ: POST, no GET
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('resultados').innerHTML = xhr.responseText;
                 }
-                )
-        });
+            };
 
+            xhr.send('municipi=' + encodeURIComponent(ciudad)); // ENVÍAS los datos correctamente en el body
+        }
 
 
     </script>
-</body>
 
-</html>
+</body>
 
 </html>
